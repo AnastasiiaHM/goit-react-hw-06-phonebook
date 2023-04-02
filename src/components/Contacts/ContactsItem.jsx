@@ -19,7 +19,7 @@ Item.propTypes = {
       id: PropTypes.string,
       name: PropTypes.string,
       number: PropTypes.string,
-    })
+    }).isRequired
   ),
   onClick: PropTypes.func.isRequired,
 };

@@ -1,41 +1,37 @@
-import useLocalStorage from 'components/LocalStorage';
-import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
 
+import { getContacts } from '../../redux/selectors';
+import { addContact } from '../../redux/contaksSlice';
 import { StyledForm, Input, Label, Button } from '../Form/Form.styled';
 
-export default function Form({ onSubmit }) {
-  const [name, setName] = useLocalStorage('name', '');
-  const [number, setNumber] = useLocalStorage('number', '');
+export const Form = () => {
+  const contacts = useSelector(getContacts);
+  const dispatch = useDispatch();
 
-  const statePropUpdate = ({ target }) => {
-    const { name, value } = target;
-    switch (name) {
-      case 'name':
-        setName(value);
-        break;
-      case 'number':
-        setNumber(value);
-        break;
-
-      default:
-        return;
-    }
+  const isContactExist = newName => {
+    return contacts.find(({ name }) => {
+      return name.toLowerCase() === newName.toLowerCase();
+    });
   };
 
-  const handleSubmit = event => {
-    event.preventDefault();
-    onSubmit({ name, number });
-    setName('');
-    setNumber('');
+  const onSubmit = e => {
+    e.preventDefault();
+    const form = e.target;
+    const name = form.elements.name.value;
+    const number = form.elements.number.value;
+    if (isContactExist(name)) {
+      return alert(`${name} is already in Contacts`);
+    }
+    dispatch(addContact(name, number));
+    form.reset();
   };
 
   return (
-    <StyledForm onSubmit={handleSubmit}>
+    <StyledForm onSubmit={onSubmit}>
       <Label>
         Name
         <Input
-          value={name}
-          onChange={statePropUpdate}
+          // value={name}
           type="text"
           name="name"
           pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
@@ -46,8 +42,7 @@ export default function Form({ onSubmit }) {
       <Label>
         Number
         <Input
-          value={number}
-          onChange={statePropUpdate}
+          // value={number}
           type="tel"
           name="number"
           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
@@ -58,8 +53,4 @@ export default function Form({ onSubmit }) {
       <Button>Add contact</Button>
     </StyledForm>
   );
-}
-
-Form.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
 };

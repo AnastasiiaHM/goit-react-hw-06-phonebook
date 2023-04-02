@@ -1,8 +1,15 @@
-import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
 
+import { setFilter } from '../../redux/filtersSlice';
 import { Input, Label } from './Filter.styled';
 
-export const Filter = ({ onChange }) => {
+export const Filter = () => {
+  const dispatch = useDispatch();
+  const onChange = e => {
+    const filterValue = e.target.value;
+
+    dispatch(setFilter(filterValue));
+  };
   return (
     <div>
       <Label>
@@ -16,8 +23,4 @@ export const Filter = ({ onChange }) => {
       </Label>
     </div>
   );
-};
-
-Filter.propTypes = {
-  onChange: PropTypes.func.isRequired,
 };
